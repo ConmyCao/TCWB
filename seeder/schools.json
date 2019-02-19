@@ -1,0 +1,9 @@
+{ 
+    "_id" : ObjectId("5abe08490842a43e5c5011b1"), 
+    "name" : "通产伟博", 
+    "brief" : "",
+    "adress": "",
+    "key": "superAdmin",
+    "classes" : [], 
+    "staff" : []
+}

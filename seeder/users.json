@@ -1,0 +1,11 @@
+{ 
+    "_id" : ObjectId("5aa3ec078ae9a3cdcf92295f"), 
+    "username" : "admin", 
+    "password" : "123456", 
+    "mobile" : "15112345678", 
+    "role" : ObjectId("5aa3ed2f8ae9a3cdcf922963"), 
+    "school" : ObjectId("5abe08490842a43e5c5011b1"), 
+    "info" : {
+
+    }
+}

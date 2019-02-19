@@ -1,0 +1,4700 @@
+swagger: '2.0'
+info:
+  description: >-
+    <b>欢迎使用通产伟博智慧云课堂web管理后台接口查询文档，请知晓以下事项：</b><br>
+    ① Put和Post方式中，请遵守案例中列出的数据格式，切勿自定义格式执行，以免造成不必要的错误。<br>
+    ② 接口使用中，输入school-id作为header的为指定学校端口，未设置的则为通产模块功能。<br>
+    ③ 查询接口query中参数可以置空，表示该值不作筛选。<br>
+    ④ 接口Body中若重复出现某参数，请保持该参数和值一致。
+  version: 1.0.0
+  title: 通产伟博智慧云课堂后台管理接口工具
+  contact:
+    email: caoc@shinetechchina.com
+host: localhost:9000
+basePath: 
+tags:
+  - name: 登录
+    description: 用户名密码登录
+  - name: 主页
+    description: 主页展示内容
+  - name: 消息
+    description: 发送消息或展示消息
+  - name: 学校管理
+    description: 学校管理        
+  - name: 班级管理
+    description: 班级管理  
+  - name: 教师管理
+    description: 教师管理   
+  - name: 学生管理
+    description: 学生管理      
+  - name: 家长管理
+    description: 家长管理   
+  - name: 课程表管理
+    description: 课程表管理   
+  - name: 公众号管理
+    description: 公众号管理
+  - name: 幻灯组管理
+    description: 幻灯组管理
+  - name: 幻灯片管理
+    description: 幻灯片管理        
+  - name: 功能集管理
+    description: 功能集管理 
+  - name: 门户栏目管理
+    description: 门户栏目管理  
+  - name: 门户文章管理
+    description: 门户文章管理  
+  - name: 我的资源
+    description: 我的资源
+  - name: 校本资源
+    description: 校本资源
+  - name: 日程管理
+    description: 日程查看及管理
+  - name: 角色管理
+    description: 角色管理  
+  - name: 用户管理
+    description: 用户管理
+  - name: 权限管理
+    description: 权限管理
+  - name: 通产学校管理
+    description: 学校管理    
+  - name: 电子课本
+    description: 电子课本    
+    
+schemes:
+  - http
+  - https
+paths:
+  /users/login/admin:
+    get:
+      tags:
+        - 登录
+      summary: 使用用户名密码登录系统
+      description: ''
+      operationId: loginUser
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: username
+          in: query
+          description: 登录用户名
+          required: true
+          type: string
+        - name: password
+          in: query
+          description: 登录密码
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 登录成功！
+          schema:
+            type: string
+          headers:
+            X-Rate-Limit:
+              type: integer
+              format: int32
+              description: calls per hour allowed by the user
+            X-Expires-After:
+              type: string
+              format: date-time
+              description: date in UTC when token expires
+        '400':
+          description: 用户名或密码错误
+
+          
+  /users/authorize/admin:
+    get:
+      tags:
+        - 主页
+      summary: 验证是否是有效的登录信息
+      description: Returns a map of status codes to quantities
+      operationId: home
+      produces:
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          value: {token}          
+          required: true
+          type: string      
+      responses:
+        '200':
+          description: 操作成功！
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+              format: int32
+      security:
+        - api_key: []
+
+  /roles/ignore/admin:
+    get:
+      tags:
+        - 主页
+      summary: 获取系统角色
+      description: Returns a map of status codes to quantities
+      operationId: settings
+      produces:
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}          
+          type: string      
+      responses:
+        '200':
+          description: 操作成功！
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+              format: int32
+      security:
+        - api_key: []
+
+
+  /messages/admin:
+    get:
+      tags:
+        - 消息
+      summary: 获取查看消息
+      description: get message
+      operationId: getmessage
+      produces:
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户token
+          required: true
+          value: {token}        
+          type: string      
+      responses:
+        '200':
+          description: 操作成功！
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+              format: int32
+              $ref: '#/definitions/message'
+      security:
+        - api_key: []
+
+    post:
+      tags:
+        - 消息
+      summary: 创建发送消息
+      description: ''
+      operationId: sendMessage
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}          
+          type: string  
+        - in: body
+          name: body
+          description: 输入消息参数
+          required: true
+          schema:
+            type: object
+            example:
+              classes: [classid]
+              content: "自动化发送的简要内容"
+              message: "自动化发送的短信内容"
+              news: "<p>自动化发送的消息内容</p>↵"
+              pushMethod: ["wechat"]
+              roles: [roleid]
+              sendTime: "2018-09-27T07:21:17.731Z"
+              title: "自动化发送的消息标题"
+      responses:
+        default:
+          description: 操作成功！
+
+
+
+  /subjects/admin:
+    get:
+      tags:
+        - 学校管理
+      summary: 科目信息
+      description: Multiple status values can be provided with comma separated strings
+      operationId: subjectinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId}
+          type: string          
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+    post:
+      tags:
+        - 学校管理
+      summary: 添加科目
+      description: Multiple status values can be provided with comma separated strings
+      operationId: addsubject
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: true
+          value: {schoolId}          
+          type: string
+        - in: body
+          name: name
+          description: 输入科目名
+          required: true
+          schema:
+            type: array
+            example:
+              name: "暴走竞技"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /qiniu/upload/admin:  
+    post:
+      tags:
+        - 学校管理
+      summary: 上传图片
+      description: ''
+      operationId: uploadFile
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId}
+          type: string
+        - name: file
+          in: formData
+          description: 选择图片
+          required: true
+          type: file          
+        - name: ext
+          in: query
+          description: 图片格式
+          required: true
+          type: string
+        - name: bucket
+          in: query
+          description: 相册名test-images
+          required: true
+          type: string
+          schema:
+            type: string
+            example:
+              bucket: "test-images"                             
+      responses:
+        '200':
+          description: 操作成功！
+          schema:
+            $ref: '#/definitions/ApiResponse'
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /qiniu/delete/admin:
+    post:
+      tags:
+        - 学校管理
+      summary: 删除图片
+      description: Multiple status values can be provided with comma separated strings
+      operationId: deletimage
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId}          
+          type: string
+        - name: bucket
+          in: query
+          description: 输入图册名，例如test-images
+          required: true
+          type: string
+        - name: key
+          in: query
+          description: 输入图片key名，例如8a73d77a52eedd4188b51a7a8bc5a9ef.png
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+            
+  /schools/{school-id}/admin:
+    put:
+      tags:
+        - 学校管理
+      summary: 提交/修改学校信息
+      description: 输入学校相关信息提交可修改
+      operationId: putschoolmessage
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: school-id
+          in: path
+          description: 输入学校school-id
+          required: true
+          value: {schoolId}
+          type: string              
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}          
+          type: string
+        - in: body
+          name: body
+          description: 输入学校参数
+          required: true
+          schema:
+            type: object
+            example:
+              adress: "湖北省武汉市洪山区312号双恒创业园"
+              badge: [{uid:"rc-upload-1533717382718-15",url:"ff1d072c0478af422c21d04f33ae324e.jpg"}]
+              brief: "华中师范大学（Central China Normal University），简称“华中师大”，是中华人民共和国教育部直属的一所师范类、综合性研究型全国重点大学，是国家“211工程”、“985工程优势学科创新平台”重点建设院校，国家首批“双一流”世界一流学科建设高校 [1]  ，入选“2011计划”、“111计划”、“海外高层次人才引进计划（千人计划）”、“教育部来华留学示范基地”，是中日人文交流大学联盟高校 [2]  ，武汉七校联合办学成员，国家首批博士、硕士学位授予权的单位，国家师范生免费教育试点高校，中国政府奖学金来华留学生接收院校，国家培养中、高等学校师资和其他高级专门人才的重要基地。"
+              section: "初中"
+              sectionTime: 10
+              subject: ["5aa3ec078ae9a3cdcf922904","5aa3ec078ae9a3cdcf922905"]
+              semesterDate: ["2018-08-01T08:46:42.464Z", "2019-01-31T08:46:42.464Z"]
+              _id: "5b695c9106611f4e98404d49"         
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /classes/admin:
+    get:
+      tags:
+        - 班级管理
+      summary: 班级显示及查询/清除查询
+      description: Multiple status values can be provided with comma separated strings
+      operationId: classlist
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: true
+          value: {schoolId}          
+          type: string
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer
+        - name: filterOption
+          in: query
+          description: 填写即查询，ex：{"name":"43"}
+          required: false
+          type: string        
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    post:
+      tags:
+        - 班级管理
+      summary: 新增班级
+      description: ''
+      operationId: 新增班级
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId}          
+          type: string
+        - in: body
+          name: body
+          description: 输入班级参数
+          required: true
+          schema:
+            type: object
+            example:
+              grade: "5ab3ec078ae9a3cdcf922908(年级ID)"
+              name: "班级名称"
+              headmaster: ["5b753b540281664d147ae9c5(班主任ID，非必填)"]
+              remark: "班级备注（非必填）"
+              section: "初中"
+              type: "1（0为行政班，1为走读班）"                                            
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效！
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'            
+
+  /classes/all/admin:
+    get:
+      tags:
+        - 班级管理
+      summary: 获取所有班级信息
+      description: Multiple status values can be provided with comma separated strings
+      operationId: allclass
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: true
+          value: {schoolId}
+          type: string
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /grades/admin:
+    get:
+      tags:
+        - 班级管理
+      summary: 获取学段年级信息
+      description: Multiple status values can be provided with comma separated strings
+      operationId: xueduannianji
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: true
+          value: {schoolId}
+          type: string
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /classes/{classid}/admin:
+    put:
+      tags:
+        - 班级管理
+      summary: 修改班级信息
+      description: Multiple status values can be provided with comma separated strings
+      operationId: xiugaibanji
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: classid
+          in: path
+          description: 输入用户获取的classid值
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: 输入班级参数
+          required: true
+          schema:
+            type: array
+            example:
+              grade: "5ab3ec078ae9a3cdcf922907"
+              headmaster: ["5b7b860a1ed7fc204c7625e9"]
+              name: "测试上司是是是是42342424332423"
+              remark: "3214324234234"
+              school: "5b695c9106611f4e98404d49"
+              section: "高中"
+              type: "1"
+              _id: "5b7bb3b31ed7fc204c7625f9"           
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /classes/upload/excel/admin:  
+    post:
+      tags:
+        - 班级管理
+      summary: 批量导入班级
+      description: ''
+      operationId: uploadschooltemplate
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId}
+          type: string
+        - name: file
+          in: formData
+          description: 选择班级模板
+          required: true
+          type: file                                   
+      responses:
+        '200':
+          description: 操作成功！
+          schema:
+            $ref: '#/definitions/ApiResponse'
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /classes/{class-id}/admin:
+    delete:
+      tags:
+        - 班级管理
+      summary: 删除班级
+      description: Multiple status values can be provided with comma separated strings
+      operationId: deletclass
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: class-id
+          in: path
+          description: 输入学校class-id
+          required: true
+          type: string  
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId}
+          type: string
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+            
+
+  /users/relation/teacher/admin:
+    get:
+      tags:
+        - 教师管理
+      summary: 教师显示及查询/清除查询
+      description: Multiple status values can be provided with comma separated strings
+      operationId: classlist
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: true
+          value: {schoolId}
+          type: string
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer
+        - name: filterOption
+          in: query
+          description: 填写即查询，ex：{"name":"老师","subject":"5aa3ec078ae9a3cdcf922904","classes":["5ab3ec078ae9a3cdcf922903","5b6bf9ce8503ca35ac55c401"]}
+          required: false
+          type: string        
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /users/relation//admin:  
+    post:
+      tags:
+        - 教师管理
+      summary: 新增教师
+      description: ''
+      operationId: addteacher
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: school-id
+          in: header
+          value: {schoolId}
+          description: 输入用户获取的school-id值
+          required: false
+          type: string
+        - in: body
+          name: body
+          description: 输入教师参数
+          required: true
+          schema:
+            type: object
+            example:
+              from: "teacher"
+              values:
+                classes: ["5b7ba83a1ed7fc204c7625f0","5b6bf9ce8503ca35ac55c401"]
+                info:
+                  age: "45"
+                  gender: "男"
+                  mobile: "15978945612"
+                  name: "史上最棒老师"                
+                  password: "1111"                   
+                  sfzj: "身份证号420117199003121215"
+                  staff: "员工号45699565"
+                  username: "csdfsdf"                  
+                  xl: "本科"
+                  classes: [{key: "5b7ba83a1ed7fc204c7625f0", label: "冲天班"}, {key: "5b6bf9ce8503ca35ac55c401", label: "普通班"}]
+                  mainSubject: 
+                    _id: "5aa3ec078ae9a3cdcf922904"
+                    name: "物理"
+                  subject: [{key: "5aa3ec078ae9a3cdcf922905", label: "化学"}]
+                mobile: "15978945612"
+                name: "史上最棒老师"                
+                password: "1111"                
+                subject: [{_id: "5aa3ec078ae9a3cdcf922905", name: "化学"}]
+                username: "csdfsdf"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效!
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /users/relation/{teacher-id}/admin:  
+    put:
+      tags:
+        - 教师管理
+      summary: 修改教师
+      description: ''
+      operationId: updateteacher
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: school-id
+          in: header
+          value: {schoolId}
+          description: 输入用户获取的school-id值
+          required: false
+          type: string
+        - name: teacher-id
+          in: path
+          description: 输入需要被修改的教师id值
+          required: true
+          type: string          
+        - in: body
+          name: body
+          description: 输入教师参数
+          required: true
+          schema:
+            type: object
+            example:
+              from: "teacher"
+              values:
+                classes: ["5b7ba83a1ed7fc204c7625f0"]
+                olderClasses: ["5b7ba83a1ed7fc204c7625f0"]
+                subject: [{_id: "5aa3ec078ae9a3cdcf922905", name: "化学"}]
+                isAlowLogin: true
+                isbinded: false
+                mobile: "15984565465"
+                name: "dfgdgfkgdffdg反倒是不借款方"       
+                password: "1234567" 
+                role: "5b695c9206611f4e98404d4c"
+                school: "5b695c9106611f4e98404d49"               
+                username: "csdfsdf34"
+                _id: "5b7bd2e91ed7fc204c7625fd"
+                info:
+                  age: "45"
+                  gender: "男"
+                  mobile: "15984565465"
+                  name: "dfgdgfkgdffdg反倒是不借款方"                
+                  password: "1234567"                    
+                  sfzj: "身份证号420117199003121215"
+                  staff: "员工号45699565"
+                  username: "csdfsdf"                  
+                  xl: "本科"
+                  classes: [{key: "5b7ba83a1ed7fc204c7625f0", label: "冲天班"}, {key: "5b6bf9ce8503ca35ac55c401", label: "普通班"}]
+                  mainSubject: 
+                    _id: "5aa3ec078ae9a3cdcf922904"
+                    name: "物理"
+                  subject: [{key: "5aa3ec078ae9a3cdcf922905", label: "化学"}]
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效!
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    delete:
+      tags:
+        - 教师管理
+      summary: 删除教师
+      description: Multiple status values can be provided with comma separated strings
+      operationId: deleteacher
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: teacher-id
+          in: path
+          description: 输入教师teacher-id
+          required: true
+          type: string  
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId}
+          type: string
+        - in: body
+          name: body
+          description: 输入教师参数
+          required: true
+          schema:
+            type: object
+            example:
+              from: "teacher"
+              classes: ["5b6bf9ce8503ca35ac55c401"]       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /teachers/upload/excel/admin:  
+    post:
+      tags:
+        - 教师管理
+      summary: 批量导入教师
+      description: ''
+      operationId: uploadschooltemplate
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId}          
+          type: string
+        - name: file
+          in: formData
+          description: 选择教师模板
+          required: true
+          type: file                                   
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /users/relation/student/admin:
+    get:
+      tags:
+        - 学生管理
+      summary: 学生显示及查询/清除查询
+      description: Multiple status values can be provided with comma separated strings
+      operationId: classlist
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: true
+          value: {schoolId} 
+          type: string
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer
+        - name: filterOption
+          in: query
+          description: 填写即查询，ex：{"name":"学生名","classes":"5b6bf9ce8503ca35ac55c401"}
+          required: false
+          type: string        
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /users/relation/admin:  
+    post:
+      tags:
+        - 学生管理
+      summary: 新增学生or家长 （请修改yraml文件）
+      description: ''
+      operationId: addstudent
+      produces:
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string
+        - in: body
+          name: body
+          description: 输入学生参数
+          required: true
+          schema:
+            type: object
+            example:
+              from: "student"
+              values:
+                classes: ["5b6bf9ce8503ca35ac55c401"]
+                mobile: "15984565475"
+                name: "最强学生王"       
+                password: "123456"               
+                username: "csdfsd3f34"
+                info:
+                  classes: [{key: "5b6bf9ce8503ca35ac55c401", label: "普通班"}]
+                  hkszd: ["河北省", "秦皇岛市", "北戴河区"]
+                  cym: "王小三"
+                  dszy: "0"
+                  gender: "男"                  
+                  gj: "香港"
+                  jg: "湖北武汉"
+                  jkzk: "一般或较弱"
+                  mobile: "15986546565"
+                  mz: "苗族"
+                  name: "fdgfdghf"
+                  password: "123456"
+                  rxnyr: "2018-08-01T06:41:47.038Z"
+                  sfzj: "4201171990024516"
+                  username: "dbffdggh"
+                  xh: "11SDDDSSS23423432424"
+                  xx: "未知血型"
+                  xzz: "weswffjk sfjkls jlfjkdl fjkljksdlfjkskdl f4234324324"
+                  zjxy: "天主教"
+                  zzmm: "群众"                
+        - in: body
+          name: body
+          description: 输入家长参数
+          required: true
+          schema:
+            type: object
+            example:
+              from: "parent"
+              values:
+                mobile: "15978945612"
+                name: "史上最棒家长"                
+                password: "1111"                
+                username: "jiazhangcsdfdsdf"
+                students: ["5b7b87f61ed7fc204c7625ed"]
+                info:
+                  csrq: "2018-08-01T07:58:51.594Z"
+                  gender: "男"
+                  gj: "香港"
+                  jg: "湖北武汉"
+                  jkzk: "一般或较弱"
+                  mobile: "15989454565"
+                  mz: "回族"
+                  name: "诗歌但是大锅饭"
+                  password: "123456"
+                  students: [{key: "5b7b87f61ed7fc204c7625ed", label: "李三都"}]
+                  username: "dgfvdgfdgfd"                               
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /users/relation/{student-id}/admin:  
+    put:
+      tags:
+        - 学生管理
+      summary: 修改学生
+      description: ''
+      operationId: updatestudent
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: school-id
+          in: header
+          value: {schoolId}
+          description: 输入用户获取的school-id值
+          required: false
+          type: string
+        - name: student-id
+          in: path
+          description: 填写需要被修改的学生student-id值
+          required: true
+          type: string          
+        - in: body
+          name: body
+          description: 输入学生参数
+          required: true
+          schema:
+            type: object
+            example:
+              from: "student"
+              values:
+                classes: ["5b6bf9ce8503ca35ac55c401"]
+                olderClasses: ["5b6bf9ce8503ca35ac55c401"]
+                isAlowLogin: true
+                isbinded: false
+                mobile: "15984565421"
+                name: "最强学生王"
+                password: "123456"               
+                role: "5aa3eef18ae9a3cdcf922975"
+                school: "5b695c9106611f4e98404d49"
+                username: "csdfsd3f34"
+                _id: "5b7d0e96452baf2db4af1f01"
+                info:
+                  classes: [{key: "5b6bf9ce8503ca35ac55c401", label: "普通班"}]
+                  hkszd: ["河北省", "秦皇岛市", "北戴河区"]
+                  cym: "王小三"
+                  dszy: "0"
+                  gender: "男"                  
+                  gj: "香港"
+                  jg: "湖北武汉"
+                  jkzk: "一般或较弱"
+                  mobile: "15986546565"
+                  mz: "苗族"
+                  name: "fdgfdghf"
+                  password: "123456"
+                  rxnyr: "2018-08-01T06:41:47.038Z"
+                  sfzj: "4201171990024516"
+                  username: "dbffdggh"
+                  xh: "11SDDDSSS23423432424"
+                  xx: "未知血型"
+                  xzz: "weswffjk sfjkls jlfjkdl fjkljksdlfjkskdl f4234324324"
+                  zjxy: "天主教"
+                  zzmm: "群众"  
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效!
+
+    delete:
+      tags:
+        - 学生管理
+      summary: 删除学生
+      description: ''
+      operationId: deletestudent
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: school-id
+          in: header
+          value: {schoolId}
+          description: 输入用户获取的school-id值
+          required: false
+          type: string
+        - name: student-id
+          in: path
+          description: 填写需要被修改的学生student-id值
+          required: true
+          type: string          
+        - in: body
+          name: body
+          description: 输入学生参数
+          required: true
+          schema:
+            type: object
+            example:
+              from: "student"
+              classes: ["5b6bf9ce8503ca35ac55c401"]
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效!
+
+  /students/upload/excel/admin:  
+    post:
+      tags:
+        - 学生管理
+      summary: 批量导入学生
+      description: ''
+      operationId: uploadschooltemplate
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string
+        - name: file
+          in: formData
+          description: 选择学生模板
+          required: true
+          type: file                                   
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /users/relation/parent/admin:
+    get:
+      tags:
+        - 家长管理
+      summary: 家长显示及查询/清除查询
+      description: Multiple status values can be provided with comma separated strings
+      operationId: classlist
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: true
+          value: {schoolId} 
+          type: string
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer
+        - name: filterOption
+          in: query
+          description: 填写即查询，ex：{"name":"家长名","students":"5b7b6d8c1ed7fc204c7625df"}
+          required: false
+          type: string        
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /users/relation/{parents-id}/admin:  
+    put:
+      tags:
+        - 家长管理
+      summary: 修改家长
+      description: ''
+      operationId: updateparents
+      produces:
+        - application/xml
+        - application/json      
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: school-id
+          in: header
+          value: {schoolId}
+          description: 输入用户获取的school-id值
+          required: false
+          type: string
+        - name: parents-id
+          in: path
+          description: 填写需要被修改的parents-id值
+          required: true
+          type: string              
+        - in: body
+          name: body
+          description: 输入家长参数
+          required: true
+          schema:
+            type: object
+            example:
+              from: "parent"
+              values:
+                olderStudents: ["5b7b87f61ed7fc204c7625ed"]
+                students: ["5b7b87f61ed7fc204c7625ed"]
+                isAlowLogin: true
+                isbinded: false
+                mobile: "15989454565"
+                name: "诗歌但是大锅饭"
+                password: "12345623424"
+                role: "5aa3eeb68ae9a3cdcf922973"
+                school: "5b695c9106611f4e98404d49"
+                username: "dgfvdgfdgfd"
+                _id: "5b7d17c9452baf2db4af1f05"
+                info:
+                  students: [{key: "5b7b87f61ed7fc204c7625ed", label: "李三都"}]
+                  csrq: "2018-08-01T07:58:51.594Z"
+                  gender: "男"
+                  gj: "香港"
+                  jg: "湖北武汉"
+                  jkzk: "一般或较弱"
+                  mobile: "15989454565"
+                  mz: "回族"
+                  name: "诗歌但是大锅饭"
+                  password: "123456"
+                  username: "dgfvdgfdgfd"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效!
+
+    delete:
+      tags:
+        - 家长管理
+      summary: 删除家长
+      description: ''
+      operationId: deleteparents
+      produces:
+        - application/xml
+        - application/json      
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: school-id
+          in: header
+          value: {schoolId}
+          description: 输入用户获取的school-id值
+          required: false
+          type: string
+        - name: parents-id
+          in: path
+          description: 填写需要被删除的parents-id值
+          required: true
+          type: string              
+        - in: body
+          name: body
+          description: 输入家长参数
+          required: true
+          schema:
+            type: object
+            example:
+              from: "parent"
+              students: ["5b7b87f61ed7fc204c7625ec"]
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效!
+
+  /parents/upload/excel/admin:  
+    post:
+      tags:
+        - 家长管理
+      summary: 批量导入家长
+      description: ''
+      operationId: uploadschooltemplate
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string
+        - name: file
+          in: formData
+          description: 选择家长模板
+          required: true
+          type: file                                   
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /schools/info/admin:
+    get:
+      tags:
+        - 课程表管理
+      summary: 获取学校信息
+      description: Multiple status values can be provided with comma separated strings
+      operationId: schoolinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string  
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /timetables/admin:
+    get:
+      tags:
+        - 课程表管理
+      summary: 教师或校长查询课程表
+      description: Multiple status values can be provided with comma separated strings
+      operationId: timetableinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: filterOption
+          in: query
+          value: '{"teacher":"5b7bc1871ed7fc204c7625fb","class":"5b6bf9ce8503ca35ac55c401"}'
+          description: 填写教师&班级ID查看具体课程（不填写即查看全部课程表-校长）
+          required: false
+          type: string            
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    post:
+      tags:
+        - 课程表管理
+      summary: 新增课程表
+      description: Multiple status values can be provided with comma separated strings
+      operationId: timetableadd
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - in: body
+          name: body
+          description: 输入课程表参数
+          required: true
+          schema:
+            type: object
+            example:
+              address: "sfsdgdgdfg"
+              class: "5b6bf9ce8503ca35ac55c401"
+              sectionRange: [3, 4]
+              teacher: "5b7bc1871ed7fc204c7625fb"
+              title: "化学"
+              weekRange: [4, 4]
+              weekday: 3    
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'            
+
+  /timetables/{timetable-id}/admin:
+    delete:
+      tags:
+        - 课程表管理
+      summary: 删除课程表
+      description: Multiple status values can be provided with comma separated strings
+      operationId: delettimetable
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string
+        - name: timetable-id
+          in: path
+          description: 填写需要被删除的课程id
+          required: true
+          type: string                    
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /official/admin:
+    get:
+      tags:
+        - 公众号管理
+      summary: 查看公众号详情
+      description: Multiple status values can be provided with comma separated strings
+      operationId: officialget
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string           
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+    put:
+      tags:
+        - 公众号管理
+      summary: 保存更新公众号详情 / 首页模板
+      description: Multiple status values can be provided with comma separated strings
+      operationId: officialupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string    
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string           
+        - in: body
+          name: body
+          description: 公众号基本配置参数 & 编辑轮播图 & 添加删除修改功能集
+          required: true
+          schema:
+            type: object
+            example:
+              admin: ["5b695cb606611f4e98404d4e"]
+              appid: "32423432dgfdg"
+              appkey: "4324242fgdgdgdg"
+              name: "hhhhsdfsdf"
+              slide_group: "5b7e6de606b10530cc01b12d"   
+              feature_group: ["5b7f5c4f0ffb4a33647f437e","5b7f5c4f0ffb4a33647f437e"]     
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /slide/group/admin:
+    get:
+      tags:
+        - 幻灯组管理
+      summary: 查看幻灯组
+      description: Multiple status values can be provided with comma separated strings
+      operationId: slidegroupinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer                 
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /slide/group/all/admin:
+    get:
+      tags:
+        - 幻灯组管理
+      summary: 获取所有幻灯组信息
+      description: Multiple status values can be provided with comma separated strings
+      operationId: slidegroupallinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string                
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    post:
+      tags:
+        - 幻灯组管理
+      summary: 新增幻灯组
+      description: Multiple status values can be provided with comma separated strings
+      operationId: slidegroup
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - in: body
+          name: body
+          description: 输入幻灯组名
+          required: true
+          schema:
+            type: object
+            example:
+              name: "是的郭德纲梵蒂冈大概"             
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /slide/group/{slidegroupid}/admin:          
+    put:
+      tags:
+        - 幻灯组管理
+      summary: 修改幻灯组
+      description: Multiple status values can be provided with comma separated strings
+      operationId: slidegroupupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string
+        - name: slidegroupid
+          in: path
+          description: 填写需要修改的幻灯组id
+          required: true
+          type: string                 
+        - in: body
+          name: body
+          description: 输入需修改的幻灯组参数
+          required: true
+          schema:
+            type: object
+            example:
+              name: "21431432324234"
+              portals: []
+              school: "5b695c9106611f4e98404d49"
+              slides: []
+              _id: "5b7e6dc406b10530cc01b12c"        
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    delete:
+      tags:
+        - 幻灯组管理
+      summary: 删除幻灯组
+      description: Multiple status values can be provided with comma separated strings
+      operationId: slidegroupdele
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string
+        - name: slidegroupid
+          in: path
+          description: 填写需要修改的幻灯组id
+          required: true
+          type: string                   
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'            
+
+  /slides/admin:
+    get:
+      tags:
+        - 幻灯片管理
+      summary: 查看幻灯片
+      description: Multiple status values can be provided with comma separated strings
+      operationId: slideinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer
+        - name: filterOption
+          in: query
+          description: 填写即查询
+          value: '{"title":"玩儿"}'
+          required: false
+          type: strings
+        - name: _id
+          in: query
+          description: 输入幻灯组id
+          required: false
+          type: string
+          value: 5b7e6de606b10530cc01b12d
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    post:
+      tags:
+        - 幻灯片管理
+      summary: 新增幻灯片
+      description: Multiple status values can be provided with comma separated strings
+      operationId: slideadd
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: body
+          in: body
+          description: 填写将新建的幻灯片参数
+          required: true
+          schema:
+            type: object
+            example:
+              name: "天下最棒"
+              slides:
+                title: "这个大概是世界上最美的一张幻灯片"
+                link: "http://m.lumingwy.com"
+                order: 4
+                image: "ff454e58a309d12e5dea9dfb5cd2eaed.jpg"
+              _id: "5b7e6de606b10530cc01b12d"
+
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'            
+
+  /slides/{slide-id}/admin:
+    put:
+      tags:
+        - 幻灯片管理
+      summary: 修改幻灯片
+      description: Multiple status values can be provided with comma separated strings
+      operationId: slideupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: slide-id
+          in: path
+          description: 填写需要修改的幻灯片id
+          required: true
+          type: string            
+        - name: body
+          in: body
+          description: 填写将新建的幻灯片参数
+          required: true
+          schema:
+            type: object
+            example:
+              _id: "5b7ec36e06b10530cc01b136"
+              title: "这个大概是世界上最美的一张幻灯片"
+              image: "ff454e58a309d12e5dea9dfb5cd2eaed.jpg"  
+              link: "http://m.lumingwy.com"
+              order: 4            
+              slide_group: "5b7e6de606b10530cc01b12d"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'            
+
+    delete:
+      tags:
+        - 幻灯片管理
+      summary: 删除幻灯片
+      description: Multiple status values can be provided with comma separated strings
+      operationId: slidedelete
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: slide-id
+          in: path
+          description: 填写需要删除的幻灯片id
+          required: true
+          value: "5b7f5ab50ffb4a33647f437d"
+          type: string            
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'      
+
+  /feature/group/admin:
+    get:
+      tags:
+        - 功能集管理
+      summary: 查看功能集
+      description: Multiple status values can be provided with comma separated strings
+      operationId: featureinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer
+        - name: filterOption
+          in: query
+          description: 填写即按功能集名称查询
+          value: '{"name":"2"}'
+          required: false
+          type: strings
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    post:
+      tags:
+        - 功能集管理
+      summary: 新增功能集
+      description: Multiple status values can be provided with comma separated strings
+      operationId: featureadd
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: body
+          in: body
+          description: 填写功能集详情
+          required: true
+          schema:
+            type: object
+            example:
+              order: 7
+              name: "功能集名称"
+              features: [{image: "icon07.png", title: "功能名", link: "http://m.baidu.com"},{image: "icon31.png", title: "功能名2", link: "http://www.baidu.com"}]       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /feature/group/{feature-id}/admin:
+    put:
+      tags:
+        - 功能集管理
+      summary: 修改功能集
+      description: Multiple status values can be provided with comma separated strings
+      operationId: slideupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: feature-id
+          in: path
+          description: 填写需要修改的功能集id
+          required: true
+          value: "5b7f67ad0ffb4a33647f4386"
+          type: string                       
+        - name: body
+          in: body
+          description: 填写需修改功能集详情
+          required: true
+          schema:
+            type: object
+            example:
+              _id: "5b7f67ad0ffb4a33647f4386"
+              school: "5b695c9106611f4e98404d49"
+              order: 7
+              name: "功能集名称"
+              features: [{image: "icon07.png", title: "功能名", link: "http://m.baidu.com"},{image: "icon31.png", title: "功能名2", link: "http://www.baidu.com"}]       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'            
+
+    delete:
+      tags:
+        - 功能集管理
+      summary: 删除功能集
+      description: Multiple status values can be provided with comma separated strings
+      operationId: slidedelete
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: feature-id
+          in: path
+          description: 填写需要删除的功能集id
+          required: true
+          value: "5b7f67ad0ffb4a33647f4386"
+          type: string                       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'            
+
+  /portal/admin:
+    get:
+      tags:
+        - 门户栏目管理
+      summary: 查看栏目
+      description: Multiple status values can be provided with comma separated strings
+      operationId: portalinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer
+        - name: filterOption
+          in: query
+          description: 填写即按栏目名称查询
+          value: '{"name":"fs"}'
+          required: false
+          type: strings
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    post:
+      tags:
+        - 门户栏目管理
+      summary: 新增门户栏目
+      description: Multiple status values can be provided with comma separated strings
+      operationId: portaladd
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: body
+          in: body
+          description: 填写门户栏目详情
+          required: true
+          schema:
+            type: object
+            example:
+              slide_group: "5b7e6de606b10530cc01b12d"
+              order: 7
+              name: "门户栏目名称"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /portal/{portal-id}/admin:
+    put:
+      tags:
+        - 门户栏目管理
+      summary: 修改门户栏目
+      description: Multiple status values can be provided with comma separated strings
+      operationId: portalupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: portal-id
+          in: path
+          description: 填写需要修改的门户栏目id
+          required: true
+          value: "5b7f6c850ffb4a33647f438b"
+          type: string                       
+        - name: body
+          in: body
+          description: 填写需修改的门户栏目详情
+          required: true
+          schema:
+            type: object
+            example:
+              _id: "5b7f6c850ffb4a33647f438b"
+              slide_group: "5b7e6de606b10530cc01b12d"
+              school: "5b695c9106611f4e98404d49"
+              order: 7
+              name: "功能集名称"
+              link: "http://localhost:3000/portal/5b7f6c850ffb4a33647f438b"     
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'      
+
+    delete:
+      tags:
+        - 门户栏目管理
+      summary: 删除门户栏目
+      description: Multiple status values can be provided with comma separated strings
+      operationId: portaldelete
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: portal-id
+          in: path
+          description: 填写需要删除的门户栏目id
+          required: true
+          value: "5b7f6b1c0ffb4a33647f4388"
+          type: string                       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'            
+
+  /article/admin:
+    get:
+      tags:
+        - 门户文章管理
+      summary: 查看文章
+      description: Multiple status values can be provided with comma separated strings
+      operationId: articleinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer
+        - name: filterOption
+          in: query
+          description: 填写文章分类查询，值填空即为全部
+          value: '{"title":"违反","type":"consult/display","status":"draft/sent"}'
+          required: false
+          type: strings
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    post:
+      tags:
+        - 门户文章管理
+      summary: 新增文章
+      description: Multiple status values can be provided with comma separated strings
+      operationId: portaladd
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: body
+          in: body
+          description: 填写门户栏目详情
+          required: true
+          schema:
+            type: object
+            example:
+              brief: "文章摘要"
+              content: "<p>文章内容</p>↵"
+              image: "b85117f55f4f2d950a60ec442455d37e.jpg"
+              isTop: true
+              order: 7
+              portals: ["5b7f6c330ffb4a33647f438a"]
+              status: "sent"
+              title: "文章标题呢"
+              type: "consult"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /article/{article-id}/admin:
+    put:
+      tags:
+        - 门户文章管理
+      summary: 修改文章
+      description: Multiple status values can be provided with comma separated strings
+      operationId: portalupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string
+        - name: article-id
+          in: path
+          description: 填写需要修改的文章id
+          required: true
+          value: "5b7f74a30ffb4a33647f4393"
+          type: string                 
+        - name: body
+          in: body
+          description: 填写门户栏目详情
+          required: true
+          schema:
+            type: object
+            example:
+              _id: "5b7f74a30ffb4a33647f4393"
+              brief: "文章摘要"
+              content: "<p>文章内容</p>↵"
+              image: "b85117f55f4f2d950a60ec442455d37e.jpg"
+              isTop: true
+              link: "http://localhost:3000/article/5b7f74a30ffb4a33647f4393"
+              school: "5b695c9106611f4e98404d49"
+              share_count: 0
+              view_count: 0
+              order: 7
+              portals: ["5b7f6c330ffb4a33647f438a"]
+              status: "sent"
+              title: "文章标题呢"
+              type: "consult"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    delete:
+      tags:
+        - 门户文章管理
+      summary: 删除文章
+      description: Multiple status values can be provided with comma separated strings
+      operationId: articledelete
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: article-id
+          in: path
+          description: 填写需要删除的文章id
+          required: true
+          value: "5b7f75ef0ffb4a33647f4394"
+          type: string                       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'      
+
+  /my/resources/admin:
+    get:
+      tags:
+        - 我的资源
+      summary: 查看我的资源
+      description: Multiple status values can be provided with comma separated strings
+      operationId: myresourceinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer
+        - name: filterOption
+          in: query
+          description: 填写我的资源信息，值填空即为全部
+          value: '{"initiator":"5aa3ec078ae9a3cdcf92295f","subject":"品德与生活(社会)","grade":"小学二年级","variety":"教学案","title":"小程序"}'
+          required: false
+          type: strings
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    post:
+      tags:
+        - 我的资源
+      summary: 上传我的资源
+      description: Multiple status values can be provided with comma separated strings
+      operationId: myresourceupload
+      produces:
+        - application/json   
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string             
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:
+              grade: "小学一年级"
+              initiator: "5aa3ec078ae9a3cdcf92295f"
+              isShare: "0"
+              link: "f6f08c27e8e80450580e0f07a5f7b13f.docx"
+              size: 0
+              subject: "化学"
+              title: "最美不过夕阳红.docx"
+              type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              variety: "教学案"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /my/resources/{myresource-id}/admin:
+    delete:
+      tags:
+        - 我的资源
+      summary: 删除我的资源
+      description: Multiple status values can be provided with comma separated strings
+      operationId: myresourcedelete
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: myresource-id
+          in: path
+          description: 填写需要删除的我的资源id
+          required: true
+          value: "5b7f9e4f0ffb4a33647f4398"
+          type: string                       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'    
+
+  /school/resources/admin:
+    get:
+      tags:
+        - 校本资源
+      summary: 校本资源
+      description: Multiple status values can be provided with comma separated strings
+      operationId: schoolresourceinfo
+      produces:
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer
+        - name: filterOption
+          in: query
+          description: 填写校本资源信息，值填空即为全部
+          value: '{"isShare":"1","subject":"体育与健康","grade":"初中八年级","variety":"教学案","title":"1"}'
+          required: false
+          type: strings
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    post:
+      tags:
+        - 校本资源
+      summary: 上传校本资源
+      description: Multiple status values can be provided with comma separated strings
+      operationId: schoolresourceupload
+      produces:
+        - application/json   
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string             
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example: 
+              grade: "小学一年级"
+              initiator: "5aa3ec078ae9a3cdcf92295f"
+              isShare: "1"
+              link: "3bca9b913b3a7e223635ca3d253c4f4e.docx"
+              size: 202661
+              subject: "地理"
+              title: "领创与第三方应用对接说明(1).docx"
+              type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              variety: "课件"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /school/resources/{schoolresource-id}/admin:
+    delete:
+      tags:
+        - 校本资源
+      summary: 删除校本资源
+      description: Multiple status values can be provided with comma separated strings
+      operationId: myresourcedelete
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: schoolresource-id
+          in: path
+          description: 填写需要删除的校本资源id
+          required: true
+          value: "5b7fa5ff0ffb4a33647f43a8"
+          type: string                       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'    
+
+  /schedules/admin:
+    get:
+      tags:
+        - 日程管理
+      summary: 日程查看
+      description: Multiple status values can be provided with comma separated strings
+      operationId: schedulesinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer
+        - name: pageFilter
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer          
+        - name: filterOption
+          in: query
+          description: 填写需要查询的日程名
+          value: '{"title":"一个"}'
+          required: false
+          type: strings
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    post:
+      tags:
+        - 日程管理
+      summary: 新建日程
+      description: Multiple status values can be provided with comma separated strings
+      operationId: schedulesadd
+      produces:
+        - application/xml
+        - application/json   
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string             
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:
+              address: "武汉市新洲区旧街街问津书院"
+              eventType: "emergency/normal"
+              fromTime: "2018-08-09 16:43"
+              toTime: "2018-08-09 16:45"
+              repeat: "4/nerver"
+              title: "最新的日程"
+              users: ["5b7fa5200ffb4a33647f43a5", "5aa3ec078ae9a3cdcf92295f"]
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /schedules/{schedule-id}/admin:
+    put:
+      tags:
+        - 日程管理
+      summary: 修改日程
+      description: Multiple status values can be provided with comma separated strings
+      operationId: portalupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string
+        - name: schedule-id
+          in: path
+          description: 填写需要修改的日程id
+          required: true
+          value: "5b7f74a30ffb4a33647f4393"
+          type: string                 
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:
+              _id: "5b811db60ffb4a33647f43ba"
+              address: "武汉市新洲区旧街街问津书院"
+              eventType: "emergency/normal"
+              school: "5b7fa5200ffb4a33647f43a1"
+              status: false
+              fromTime: "2018-08-09 16:43"
+              toTime: "2018-08-09 16:45"
+              repeat: "4/nerver"
+              title: "最新的日程"
+              users: ["5b7fa5200ffb4a33647f43a5", "5aa3ec078ae9a3cdcf92295f"]
+              createdBy:
+                classes: []
+                isAlowLogin: true
+                isbinded: false
+                mobile: "15112345678"
+                parents: []
+                password: "123456"
+                role: "5aa3ed2f8ae9a3cdcf922963"
+                school: "5abe08490842a43e5c5011b1"
+                students: []
+                subject: []
+                username: "admin"
+                _id: "5aa3ec078ae9a3cdcf92295f"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    delete:
+      tags:
+        - 日程管理
+      summary: 删除日程
+      description: Multiple status values can be provided with comma separated strings
+      operationId: portaldetect
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: schedule-id
+          in: path
+          description: 填写需要修改的日程id
+          required: true
+          value: "5b7f74a30ffb4a33647f4393"
+          type: string                 
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /roles/admin:
+    get:
+      tags:
+        - 角色管理
+      summary: 角色查看
+      description: Multiple status values can be provided with comma separated strings
+      operationId: roloeinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId}  
+          type: string
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer
+        - name: pageFilter
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer          
+        - name: filterOption
+          in: query
+          description: 填写需要查询的角色名名
+          value: '{"rolename":"师"}'
+          required: false
+          type: strings
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    post:
+      tags:
+        - 角色管理
+      summary: 新建角色
+      description: Multiple status values can be provided with comma separated strings
+      operationId: roleadd
+      produces:
+        - application/xml
+        - application/json   
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string             
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:
+              order: 2
+              rolename: "新角色"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /roles/{role-id}/admin:
+    put:
+      tags:
+        - 角色管理
+      summary: 修改角色
+      description: Multiple status values can be provided with comma separated strings
+      operationId: roleupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string
+        - name: role-id
+          in: path
+          description: 填写需要修改的角色id
+          required: true
+          value: "5b8203f00ffb4a33647f43bc"
+          type: string                 
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:
+              authorize: []
+              order: 3
+              rolename: "最新角色222222"
+              school: "5b7fa5200ffb4a33647f43a1"
+              _id: "5b8203f00ffb4a33647f43bc"              
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    delete:
+      tags:
+        - 角色管理
+      summary: 删除角色
+      description: Multiple status values can be provided with comma separated strings
+      operationId: roledetete
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: role-id
+          in: path
+          description: 填写需要修改的角色id
+          required: true
+          value: "5b8202b30ffb4a33647f43bb"
+          type: string                 
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /users/info/admin:
+    get:
+      tags:
+        - 用户管理
+      summary: 用户信息/用户管理中用户查询
+      description: Multiple status values can be provided with comma separated strings
+      operationId: userinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          value: {token}          
+          required: true
+          type: string
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId}          
+          type: string     
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer
+        - name: pageFilter
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer          
+        - name: filterOption
+          in: query
+          description: 填写需要查询的角色名名
+          value: '{"username":"sd","role":"5b7fa5200ffb4a33647f43a2","mobile":"159"}'
+          required: false
+          type: strings          
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    post:
+      tags:
+        - 用户管理
+      summary: 新建用户
+      description: Multiple status values can be provided with comma separated strings
+      operationId: useradd
+      produces:
+        - application/xml
+        - application/json   
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string             
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:
+              mobile: "15689898689"
+              name: "新智用户"
+              password: "12345678"
+              role: "5b7fa5200ffb4a33647f43a3"
+              username: "21342423"
+              info:
+                gender: "男"
+                mobile: "15689898689"
+                name: "新智用户"
+                password: "12345678"
+                role: "5b7fa5200ffb4a33647f43a3"
+                username: "21342423"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /users/info/{user-id}/admin:
+    put:
+      tags:
+        - 用户管理
+      summary: 修改角色
+      description: Multiple status values can be provided with comma separated strings
+      operationId: userupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string
+        - name: user-id
+          in: path
+          description: 填写需要修改的用户id
+          required: true
+          value: "5b821fcc0ffb4a33647f43c0"
+          type: string                 
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:
+              classes: []
+              isAlowLogin: true
+              isbinded: false
+              mobile: "15689898689"
+              name: "新智用户"
+              parents: []
+              password: "12345678"
+              role: "5b7fa5200ffb4a33647f43a3"
+              school: "5b7fa5200ffb4a33647f43a1"
+              students: []
+              subject: []
+              username: "2134242311222332"
+              _id: "5b821fcc0ffb4a33647f43c0"   
+              info:
+                gender: "男"
+                mobile: "15689898689"
+                name: "新智用户"
+                password: "12345678"
+                role: "5b7fa5200ffb4a33647f43a3"
+                username: "2134242311222332"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    delete:
+      tags:
+        - 用户管理
+      summary: 删除用户
+      description: Multiple status values can be provided with comma separated strings
+      operationId: userdetete
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string    
+        - name: user-id
+          in: path
+          description: 填写需要修改的用户id
+          required: true
+          value: "5b8222f40ffb4a33647f43c1"
+          type: string                 
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /roles/{role-id}/authorization/admin:
+    get:
+      tags:
+        - 权限管理
+      summary: 查看学校角色权限
+      description: Multiple status values can be provided with comma separated strings
+      operationId: sch-roleauthget
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string
+        - name: role-id
+          in: path
+          description: 填写需要修改的用户id
+          required: true
+          value: "5b7fa5200ffb4a33647f43a2"
+          type: string                 
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+    put:
+      tags:
+        - 权限管理
+      summary: 修改学校角色权限
+      description: Multiple status values can be provided with comma separated strings
+      operationId: sch-authoriztionupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: school-id
+          in: header
+          description: 输入用户获取的school-id值
+          required: false
+          value: {schoolId} 
+          type: string
+        - name: role-id
+          in: path
+          description: 填写需要修改的学校角色id
+          required: true
+          value: "5b821fcc0ffb4a33647f43c0"
+          type: string                 
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:
+              roleAuthorizations: ["get_messages","message_manage_checkAll","get_schools","create_school","modify_school","delete_school","school_manage_checkAll","get_classes","create_class","modify_class","delete_class","class_manage_checkAll","get_user_realation","create_user_realation","modify_user_realation","delete_user_realation","user_realation_manage_checkAll","get_timetables","create_timetable","modify_timetable","delete_timetable","timetable_manage_checkAll","get_official_info","put_official_info","official_manage_checkAll","get_slide_groups","create_slide_group","put_slide_group","delete_slide_group","slide_group_manage_checkAll","get_slides","create_slides","put_slides","delete_slides","slides_manage_checkAll","get_feature_groups","create_feature_group","put_feature_group","delete_feature_group","feature_group_manage_checkAll","get_school_resources","create_school_resource","delete_school_resource","school_resource_manage_checkAll","get_portals","create_portal","put_portal","delete_portal","portal_manage_checkAll","get_articles","create_article","put_article","delete_article","article_manage_checkAll","get_my_resources","create_my_resource","delete_my_resource","my_resource_manage_checkAll","get_schedules","create_schedule","modify_schedule","delete_schedule","delete_schedule_removedDate","schedule_manage_checkAll","get_roles","create_role","modify_role","delete_role","role_manage_checkAll","get_users","create_user","modify_user","delete_user","user_manage_checkAll","put_role_authorization","get_role_authorization","create_message"]
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /roles/{roleid}/authorization/admin:
+    get:
+      tags:
+        - 权限管理
+      summary: 查看通产角色权限
+      description: Multiple status values can be provided with comma separated strings
+      operationId: roleauthget
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: roleid
+          in: path
+          description: 填写需要修改的通产角色id
+          required: true
+          value: "5b6a910b9595e94934bb8c3a"
+          type: string                 
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'            
+    put:
+      tags:
+        - 权限管理
+      summary: 修改通产角色权限
+      description: Multiple status values can be provided with comma separated strings
+      operationId: authoriztionupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: roleid
+          in: path
+          description: 通产管理权填写需要修改的角色id
+          required: true
+          value: "5b6a910b9595e94934bb8c3a"
+          type: string                 
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:
+              roleAuthorizations: ["get_schools","create_school","modify_school","delete_school","school_manage_checkAll","get_ebooks","add_ebooks","update_ebooks","delete_ebooks","ebook_manage_checkAll","get_cloud_resources","add_cloud_resources","update_cloud_resources","delete_cloud_resources","cloud_resources_manage_checkAll","get_schedules","create_schedule","modify_schedule","delete_schedule","schedule_manage_checkAll","get_roles","create_role","modify_role","delete_role","role_manage_checkAll","get_users","create_user","modify_user","delete_user","user_manage_checkAll"]
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /schools/admin:
+    get:
+      tags:
+        - 通产学校管理
+      summary: 学校查询
+      description: Multiple status values can be provided with comma separated strings
+      operationId: schoolget
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string    
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer           
+        - name: filterOption
+          in: query
+          description: 填写需要查询的学校名
+          value: '{"name":"234"}'
+          required: false
+          type: strings                 
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    post:
+      tags:
+        - 通产学校管理
+      summary: 新建学校
+      description: Multiple status values can be provided with comma separated strings
+      operationId: schooladd
+      produces:
+        - application/xml
+        - application/json   
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string               
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:
+              adress: "这个是学校地址"
+              badge: [{uid: "rc-upload-1535299803336-5", url: "6c15ee96b31461a1061e61fe2eb756f9.jpg"}]
+              brief: "新建学校的简介"
+              createdSubjects: []
+              images: [{uid: "rc-upload-1535299803336-3", url: "95d06dd93e375c5b6d9835e5b8b00522.jpg"}]
+              mobile: "15994554546"
+              name: "学校名"
+              password: "234234"
+              section: "小学-初中"
+              sectionTime: 5
+              semesterDate: ["2018-08-01T00:57:20.985Z", "2018-09-29T00:57:20.985Z"]
+              subject: ["5aa3ec078ae9a3cdcf922904","5aa3ec078ae9a3cdcf922905","5aa3ec078ae9a3cdcf922906","5aa3ec078ae9a3cdcf922907","5aa3ec078ae9a3cdcf922908","5aa3ec078ae9a3cdcf922909","5aa3ec078ae9a3cdcf922910","5aa3ec078ae9a3cdcf922911","5aa3ec078ae9a3cdcf922912","5aa3ec078ae9a3cdcf922913","5aa3ec078ae9a3cdcf922914","5aa3ec078ae9a3cdcf922915","5aa3ec078ae9a3cdcf922916","5aa3ec078ae9a3cdcf922917","5aa3ec078ae9a3cdcf922918","5aa3ec078ae9a3cdcf922919","5aa3ec078ae9a3cdcf922920","5aa3ec078ae9a3cdcf922921","5aa3ec078ae9a3cdcf922901","5aa3ec078ae9a3cdcf922902","5aa3ec078ae9a3cdcf922903","5aa3ec078ae9a3cdcf922922"]
+              username: "学校管理员用户名(请改为英文数字组合)"
+                
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /schools/{schoolid}/admin:
+    put:
+      tags:
+        - 通产学校管理
+      summary: 通产管理员修改学校信息
+      description: 输入学校相关信息提交可修改
+      operationId: schoolmessageupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: schoolid
+          in: path
+          description: 输入学校schoolid
+          required: true
+          value: "5b835e650ffb4a33647f43d1"
+          type: string              
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}          
+          type: string
+        - in: body
+          name: body
+          description: 输入学校参数
+          required: true
+          schema:
+            type: object
+            example:
+              adress: "湖北省武汉市洪山区312号双恒创业园"
+              badge: [{uid: "rc-upload-1535299803336-5", url: "6c15ee96b31461a1061e61fe2eb756f9.jpg"}]
+              brief: "学校简介"
+              classes: []
+              images: [{uid: "rc-upload-1535299803336-3", url: "95d06dd93e375c5b6d9835e5b8b00522.jpg"}]
+              mobile: "15994554547"
+              name: "最牛的测试学校"
+              originAdmin:
+                classes: []
+                isAlowLogin: true
+                isbinded: false
+                mobile: "15994554547"
+                parents: []
+                password: "234234"
+                role: "5aa3edcc8ae9a3cdcf922960"
+                school: "5b835e650ffb4a33647f43d1"
+                students: []
+                subject: []
+                username: "guanliyuan3"
+                _id: "5b835e650ffb4a33647f43d5"
+              password: "234234"
+              section: "小学-初中"
+              sectionTime: 10
+              semesterDate: ["2018-08-01T08:46:42.464Z", "2019-01-31T08:46:42.464Z"]
+              staff: []
+              subject: ["5aa3ec078ae9a3cdcf922904","5aa3ec078ae9a3cdcf922905","5aa3ec078ae9a3cdcf922906","5aa3ec078ae9a3cdcf922907","5aa3ec078ae9a3cdcf922908","5aa3ec078ae9a3cdcf922909","5aa3ec078ae9a3cdcf922910","5aa3ec078ae9a3cdcf922911","5aa3ec078ae9a3cdcf922912","5aa3ec078ae9a3cdcf922913","5aa3ec078ae9a3cdcf922914","5aa3ec078ae9a3cdcf922915","5aa3ec078ae9a3cdcf922916","5aa3ec078ae9a3cdcf922917","5aa3ec078ae9a3cdcf922918","5aa3ec078ae9a3cdcf922919","5aa3ec078ae9a3cdcf922920","5aa3ec078ae9a3cdcf922921","5aa3ec078ae9a3cdcf922901","5aa3ec078ae9a3cdcf922902","5aa3ec078ae9a3cdcf922903","5aa3ec078ae9a3cdcf922922"]              
+              username: "guanliyuan3"
+              _id: "5b835e650ffb4a33647f43d1"         
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    delete:
+      tags:
+        - 通产学校管理
+      summary: 删除学校
+      description: Multiple status values can be provided with comma separated strings
+      operationId: schooldetete
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: schoolid
+          in: path
+          description: 输入学校schoolid
+          required: true
+          value: "5b8365210ffb4a33647f43dc"
+          type: string                       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /ebooks/admin:
+    get:
+      tags:
+        - 电子课本
+      summary: 电子课本查询
+      description: Multiple status values can be provided with comma separated strings
+      operationId: ebookget
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string    
+        - name: pageCurrent
+          in: query
+          description: 当前页
+          required: false
+          type: integer
+        - name: pageSize
+          in: query
+          description: 每页显示条目数
+          required: false
+          type: integer           
+        - name: filterOption
+          in: query
+          description: 填写需要查询的学校名
+          value: '{"title":"213","publisher":"213","subjects":"5aa3ec078ae9a3cdcf922905","grade":"5ab3ec078ae9a3cdcf922911"}'
+          required: false
+          type: strings                 
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+    post:
+      tags:
+        - 电子课本
+      summary: 新增电子课本
+      description: Multiple status values can be provided with comma separated strings
+      operationId: ebookadd
+      produces:
+        - application/xml
+        - application/json   
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string               
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:       
+              brief: "这是个电子课本简介"
+              display: [{uid: "rc-upload-1535338401315-4", url: "ce9740db778083e39f9049de1a617edb.jpg"}]
+              grade: "5ab3ec078ae9a3cdcf922901"
+              publisher: "华中出版社"
+              section: "初中"
+              semester: "next"
+              subjects: ["5aa3ec078ae9a3cdcf922905"]
+              title: "电子书"             
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+
+  /ebooks/{ebook-id}/admin:
+    put:
+      tags:
+        - 电子课本
+      summary: 修改电子课本
+      description: Multiple status values can be provided with comma separated strings
+      operationId: ebookupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: ebook-id
+          in: path
+          description: 填写需要修改的电子课本id
+          required: true
+          value: "5b836cb80ffb4a33647f43e3"
+          type: string       
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}          
+          type: string
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:       
+              brief: "这是个电子课本简介"
+              display: [{uid: "rc-upload-1535338401315-4", url: "ce9740db778083e39f9049de1a617edb.jpg"}]
+              grade: "5ab3ec078ae9a3cdcf922901"
+              items: []
+              pdfImages: []
+              publisher: "华中出版社"
+              school: "5abe08490842a43e5c5011b1"
+              section: "初中"
+              semester: "next"
+              subjects: ["5aa3ec078ae9a3cdcf922905"]
+              title: "电子书名"    
+              _id: "5b836cb80ffb4a33647f43e3"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+    get:
+      tags:
+        - 电子课本
+      summary: 获取某电子课本详情
+      description: Multiple status values can be provided with comma separated strings
+      operationId: ebookinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string    
+        - name: ebook-id
+          in: path
+          description: 填写需要修改的电子课本id
+          required: true
+          value: "5b836cb80ffb4a33647f43e3"
+          type: string                  
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+    delete:
+      tags:
+        - 电子课本
+      summary: 删除电子课本
+      description: Multiple status values can be provided with comma separated strings
+      operationId: ebookdetete
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: ebook-id
+          in: path
+          description: 填写需要删除的电子课本id
+          required: true
+          value: "5b82cede0ffb4a33647f43c3"
+          type: string                          
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /ebooks/{ebook-id}/menu//admin:
+    get:
+      tags:
+        - 电子课本
+      summary: 获取章节目录
+      description: Multiple status values can be provided with comma separated strings
+      operationId: menuinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string         
+        - name: ebook-id
+          in: path
+          description: 填写需要修改的电子课本id
+          required: true
+          value: "5b836cb80ffb4a33647f43e3"
+          type: string                       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+
+
+  /ebooks/{ebook-id}/menu/{parentmenuId}/admin:
+    get:
+      tags:
+        - 电子课本
+      summary: 获取章节目录子目录
+      description: Multiple status values can be provided with comma separated strings
+      operationId: childmenuinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string    
+        - name: parentmenuId
+          in: path
+          description: 填写需要修改的电子课本父目录id
+          required: true
+          value: "5b8378720ffb4a33647f43f4"
+          type: string       
+        - name: ebook-id
+          in: path
+          description: 填写需要修改的电子课本id
+          required: true
+          value: "5b836cb80ffb4a33647f43e3"
+          type: string                       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /ebooks/menu/admin:
+    post:
+      tags:
+        - 电子课本
+      summary: 新增（子）章节目录
+      description: Multiple status values can be provided with comma separated strings
+      operationId: childmenuadd
+      produces:
+        - application/xml
+        - application/json   
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string               
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:       
+              ebook: "5b836cb80ffb4a33647f43e3"
+              name: "（子）章节目录名"
+              parentId: "5b83923f0ffb4a33647f43f9(去掉该item则为新增章节目录)"           
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /ebooks/menu/{menu-id}/admin:
+    put:
+      tags:
+        - 电子课本
+      summary: 修改（子）章节目录信息
+      description: Multiple status values can be provided with comma separated strings
+      operationId: menuupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: menu-id
+          in: path
+          description: 填写需要修改的（子）章节目录id
+          required: true
+          value: "5b83923f0ffb4a33647f43f9"
+          type: string       
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}          
+          type: string
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:       
+              displayPage: "1"
+              name: "孙子章节"
+              startPage: "100"
+              _id: "5b83923f0ffb4a33647f43f9"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'          
+
+    delete:
+      tags:
+        - 电子课本
+      summary: 删除（子）章节目录信息
+      description: Multiple status values can be provided with comma separated strings
+      operationId: menudetete
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: menu-id
+          in: path
+          description: 填写需要删除的（子）章节目录id
+          required: true
+          value: "5b83923f0ffb4a33647f43f9"
+          type: string                               
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /resource/{ebook-id}/menu//admin:
+    get:
+      tags:
+        - 电子课本
+      summary: 获取资源目录
+      description: Multiple status values can be provided with comma separated strings
+      operationId: resourcemenuinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string        
+        - name: ebook-id
+          in: path
+          description: 填写需要修改的电子课本id
+          required: true
+          value: "5b836cb80ffb4a33647f43e3"
+          type: string                       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /resource/{ebook-id}/menu/{parentId}/admin:
+    get:
+      tags:
+        - 电子课本
+      summary: 获取资源目录子目录
+      description: Multiple status values can be provided with comma separated strings
+      operationId: childresourcemenuinfo
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string    
+        - name: parentId
+          in: path
+          description: 填写需要修改的电子课本父目录id
+          required: true
+          value: "5b8377490ffb4a33647f43f3"
+          type: string       
+        - name: ebook-id
+          in: path
+          description: 填写需要修改的电子课本id
+          required: true
+          value: "5b836cb80ffb4a33647f43e3"
+          type: string                       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+  /resource/menu/admin:
+    post:
+      tags:
+        - 电子课本
+      summary: 新增（子）资源目录目录
+      description: Multiple status values can be provided with comma separated strings
+      operationId: resourcemenuadd
+      produces:
+        - application/xml
+        - application/json   
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string               
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:       
+              ebook: "5b836cb80ffb4a33647f43e3(新增资源目录子目录时应去掉该item)"
+              name: "（子）资源目录名"
+              parentId: "5b83a1720ffb4a33647f4403(新增主资源目录时去掉该item)"          
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'            
+
+  /resource/menu/{resourcemenu-id}/admin:
+    put:
+      tags:
+        - 电子课本
+      summary: 修改（子）资源目录信息
+      description: Multiple status values can be provided with comma separated strings
+      operationId: resourcemenuupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: resourcemenu-id
+          in: path
+          description: 填写需要修改的（子）资源目录id
+          required: true
+          value: "5b83a30c0ffb4a33647f440a"
+          type: string       
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}          
+          type: string
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:       
+              name: "资源目录名"
+              _id: "5b83a30c0ffb4a33647f440a"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'          
+
+
+
+    delete:
+      tags:
+        - 电子课本
+      summary: 删除（子）资源目录信息
+      description: Multiple status values can be provided with comma separated strings
+      operationId: resourcemenudetete
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string     
+        - name: resourcemenu-id
+          in: path
+          description: 填写需要删除的（子）资源目录id
+          required: true
+          value: "5b83a6280ffb4a33647f440e"
+          type: string                               
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
+
+  /resource/menu/{resourcemenuid}/admin:
+    put:
+      tags:
+        - 电子课本
+      summary: 上传资源至资源目录/删除目录资源
+      description: 增加减少resource数组中值可实现资源添加删除
+      operationId: resourceupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: resourcemenuid
+          in: path
+          description: 填写需要上传资源的路径-（子）资源目录id
+          required: true
+          value: "5b83a2160ffb4a33647f4407"
+          type: string       
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}          
+          type: string
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:  
+              resources: [{uid: "rc-upload-1535355733207-5",url: "d7dd43efebcec59d1ca22698b8be95c5.docx",fileName: "新建的文本文档",ext: "docx"}]     
+              name: "gggggg"
+              _id: "5b83a2160ffb4a33647f4407"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'              
+
+
+
+  /ebooks/{ebookpdf-id}/admin:
+    put:
+      tags:
+        - 电子课本
+      summary: （上传）导入电子课本DPF
+      description: 该接口仅仅将PDF与电子课本关联起来，非展示，需继续进行下一步才能显示
+      operationId: ebookpdfupdate
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: ebookpdf-id
+          in: path
+          description: 填写需要上传pdf到电子课本的ID
+          required: true
+          value: "5b83b4490ffb4a33647f442d"
+          type: string       
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}          
+          type: string
+        - name: body
+          in: body
+          description: 
+          required: true
+          schema:
+            type: object
+            example:  
+              isPdf: true
+              pdfUrl: "1bb2e6ca82948dc41d928cb904a1351a.pdf"
+              _id: "5b83b4490ffb4a33647f442d"
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'    
+
+  /ebooks/{ebook-id}/convert/admin:
+    get:
+      tags:
+        - 电子课本
+      summary: 转化PDF电子课本内容为image且显示
+      description: Multiple status values can be provided with comma separated strings
+      operationId: ebookcontent
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api-access-token
+          in: header
+          description: 输入用户api-access-token
+          required: true
+          value: {token}
+          type: string    
+        - name: ebook-id
+          in: path
+          description: 填写需要获取的电子课本id
+          required: true
+          value: "5b836cb80ffb4a33647f43e3"
+          type: string       
+      responses:
+        '200':
+          description: 操作成功！
+        '400':
+          description: 状态值无效
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'                        
+
+securityDefinitions:
+  petstore_auth:
+    type: oauth2
+    authorizationUrl: 'http://petstore.swagger.io/oauth/dialog'
+    flow: implicit
+    scopes:
+      'write:pets': modify pets in your account
+      'read:pets': read your pets
+  api_key:
+    type: apiKey
+    name: api_key
+    in: header
+definitions:
+  Order:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      petId:
+        type: integer
+        format: int64
+      quantity:
+        type: integer
+        format: int32
+      shipDate:
+        type: string
+        format: date-time
+      status:
+        type: string
+        description: Order Status
+        enum:
+          - placed
+          - approved
+          - delivered
+      complete:
+        type: boolean
+        default: false
+    xml:
+      name: Order
+  Category:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    xml:
+      name: Category
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      username:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      userStatus:
+        type: integer
+        format: int32
+        description: User Status
+    xml:
+      name: User
+  Tag:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+    xml:
+      name: Tag
+  Pet:
+    type: object
+    required:
+      - name
+      - photoUrls
+    properties:
+      id:
+        type: integer
+        format: int64
+      category:
+        $ref: '#/definitions/Category'
+      name:
+        type: string
+        example: doggie
+      photoUrls:
+        type: array
+        xml:
+          name: photoUrl
+          wrapped: true
+        items:
+          type: string
+      tags:
+        type: array
+        xml:
+          name: tag
+          wrapped: true
+        items:
+          $ref: '#/definitions/Tag'
+      status:
+        type: string
+        description: pet status in the store
+        enum:
+          - available
+          - pending
+          - sold
+    xml:
+      name: Pet
+  ApiResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      type:
+        type: string
+      message:
+        type: string
+externalDocs:
+  description: 寻找更多帮助
+  url: 'http://swagger.io'

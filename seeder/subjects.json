@@ -1,0 +1,154 @@
+{ 
+    "_id" : ObjectId("5aa3ec078ae9a3cdcf922901"), 
+    "name" : "语文", 
+    "section": ['小学','初中','高中'],
+    "background" : "#f894a0", 
+    "original" : true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922902"),
+    "name": "数学",
+    "section": ['小学','初中','高中'],
+    "background": "#89b5f6",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922903"),
+    "name": "英语",
+    "section": ['小学','初中','高中'],
+    "background": "#fcc535",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922904"),
+    "name": "物理",
+    "section": ['小学','初中','高中'],
+    "background": "#32c0f9",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922905"),
+    "name": "化学",
+    "section": ['小学','初中','高中'],
+    "background": "#cc9fe0",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922906"),
+    "name": "生物",
+    "section": ['小学','初中','高中'],
+    "background": "#95d4f3",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922907"),
+    "name": "历史",
+    "section": ['小学','初中','高中'],
+    "background": "#fda063",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922908"),
+    "name": "历史与社会",
+    "section": ['小学','初中','高中'],
+    "background": "#fda063",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922909"),
+    "name": "思想品德(政治)",
+    "section": ['小学','初中','高中'],
+    "background": "#40d2ad",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922910"),
+    "name": "品德与生活(社会)",
+    "section": ['小学','初中','高中'],
+    "background": "#40d2ad",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922911"),
+    "name": "地理",
+    "section": ['小学','初中','高中'],
+    "background": "#32c0f0",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922912"),
+    "name": "科学",
+    "section": ['小学','初中','高中'],
+    "background": "#f894a0",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922913"),
+    "name": "体育与健康",
+    "section": ['小学','初中','高中'],
+    "background": "#89b5f6",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922914"),
+    "name": "艺术",
+    "section": ['小学','初中','高中'],
+    "background": "#fcc535",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922915"),
+    "name": "音乐",
+    "section": ['小学','初中','高中'],
+    "background": "#32c0f9",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922916"),
+    "name": "美术",
+    "section": ['小学','初中','高中'],
+    "background": "#cc9fe0",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922917"),
+    "name": "信息技术",
+    "section": ['小学','初中','高中'],
+    "background": "#95d4f3",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922918"),
+    "name": "通用技术",
+    "section": ['小学','初中','高中'],
+    "background": "#fda063",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922919"),
+    "name": "日语",
+    "section": ['小学','初中','高中'],
+    "background": "#fda063",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922920"),
+    "name": "俄语",
+    "section": ['小学','初中','高中'],
+    "background": "#40d2ad",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922921"),
+    "name": "其他外国语",
+    "section": ['小学','初中','高中'],
+    "background": "#40d2ad",
+    "original": true
+}
+{
+    "_id": ObjectId("5aa3ec078ae9a3cdcf922922"),
+    "name": "劳动与技术",
+    "section": ['小学','初中','高中'],
+    "background": "#32c0f0",
+    "original": true
+}

@@ -1,0 +1,72 @@
+{ 
+    "_id" : ObjectId("5ab3ec078ae9a3cdcf922901"), 
+    "name" : "一年级", 
+    "belong": "小学",
+    "order": 1
+}
+{
+    "_id": ObjectId("5ab3ec078ae9a3cdcf922902"),
+    "name": "二年级",
+    "belong": "小学",
+    "order": 2
+}
+{
+    "_id": ObjectId("5ab3ec078ae9a3cdcf922903"),
+    "name": "三年级",
+    "belong": "小学",
+    "order": 3
+}
+{
+    "_id": ObjectId("5ab3ec078ae9a3cdcf922904"),
+    "name": "四年级",
+    "belong": "小学",
+    "order": 4
+}
+{
+    "_id": ObjectId("5ab3ec078ae9a3cdcf922905"),
+    "name": "五年级",
+    "belong": "小学",
+    "order": 5
+}
+{
+    "_id": ObjectId("5ab3ec078ae9a3cdcf922906"),
+    "name": "六年级",
+    "belong": "小学",
+    "order": 6
+}
+{
+    "_id": ObjectId("5ab3ec078ae9a3cdcf922907"),
+    "name": "七年级",
+    "belong": "初中",
+    "order": 7
+}
+{
+    "_id": ObjectId("5ab3ec078ae9a3cdcf922908"),
+    "name": "八年级",
+    "belong": "初中",
+    "order": 8
+}
+{
+    "_id": ObjectId("5ab3ec078ae9a3cdcf922909"),
+    "name": "九年级",
+    "belong": "初中",
+    "order": 9
+}
+{
+    "_id": ObjectId("5ab3ec078ae9a3cdcf922910"),
+    "name": "高一",
+    "belong": "高中",
+    "order": 10
+}
+{
+    "_id": ObjectId("5ab3ec078ae9a3cdcf922911"),
+    "name": "高二",
+    "belong": "高中",
+    "order": 11
+}
+{
+    "_id": ObjectId("5ab3ec078ae9a3cdcf922912"),
+    "name": "高三",
+    "belong": "高中",
+    "order": 12
+}
